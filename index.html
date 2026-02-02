@@ -101,9 +101,9 @@
 
         /* --- Letter Paper --- */
         .paper {
-            background: #fffdf7; /* Creamy paper color */
+            background: #fffdf7;
             background-image: linear-gradient(#f0f0f0 1px, transparent 1px);
-            background-size: 100% 30px; /* Notebook lines effect */
+            background-size: 100% 30px;
             padding: 30px;
             max-width: 600px;
             width: 90%;
@@ -112,7 +112,6 @@
             position: relative;
             max-height: 75vh;
             overflow-y: auto;
-            /* Initial state for animation */
             opacity: 0; 
             transform: translateY(50px) rotate(0deg);
         }
@@ -237,12 +236,17 @@
 
     <script>
         // --- CONFIGURATION ---
+        // I have added placeholders for 8 photos here.
+        // Ensure you have files named pic1.png/jpg up to pic8.jpg in your folder.
         const slides = [
             { img: "pic1.png", caption: "I love you more than words can say 💖" },
             { img: "pic2.jpg", caption: "You are full of surprises! 🎁" },
             { img: "pic3.jpg", caption: "Your smile is my daily motivation ✨" },
             { img: "pic4.png", caption: "Our most precious memory together 🌟" },
-            { img: "pic5.png", caption: "You are my favorite notification 📱❤️" }
+            { img: "pic5.png", caption: "You are my favorite notification 📱❤️" },
+            { img: "pic6.jpg", caption: "Every moment with you is magic ✨" },
+            { img: "pic7.png", caption: "To many more adventures together 🌍" },
+            { img: "pic8.jpg", caption: "I love you forever and always ♾️" }
         ];
 
         let currentSlide = 0;
@@ -267,15 +271,13 @@
             
             if(id === 3) renderCarousel();
             
-            // --- UPDATED ANIMATION FOR LETTER (Section 4) ---
             if(id === 4) {
                 startRoseRain();
                 
-                // 1. Reset state
+                // Letter Animation
                 gsap.set(".paper", { y: 100, opacity: 0, rotation: -2, scale: 0.9 });
                 gsap.set(".paper p, .paper h2, .paper div", { opacity: 0, y: 20 });
 
-                // 2. Animate Paper sliding up
                 gsap.to(".paper", { 
                     y: 0, 
                     opacity: 1, 
@@ -285,7 +287,6 @@
                     ease: "power3.out" 
                 });
 
-                // 3. Animate Text Staggered (Typewriter-ish feel)
                 gsap.to(".paper h2, .paper div, .paper p", { 
                     opacity: 1, 
                     y: 0, 
@@ -334,6 +335,8 @@
             items.forEach((item, index) => {
                 const offset = index - currentSlide;
                 let visualOffset = offset;
+                
+                // Adjust for wrapping with 8 slides
                 if(offset > slides.length/2) visualOffset -= slides.length;
                 if(offset < -slides.length/2) visualOffset += slides.length;
 
@@ -401,13 +404,4 @@
                 h.style.transition = 'all 8s linear';
                 container.appendChild(h);
                 setTimeout(() => {
-                    h.style.top = '-10%';
-                    h.style.transform = `rotate(${Math.random() * 360}deg)`;
-                }, 100);
-                setTimeout(() => h.remove(), 8000);
-            }, 800);
-        }
-        initHearts();
-    </script>
-</body>
-</html>
+                    h.style.top = '-10
