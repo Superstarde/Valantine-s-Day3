@@ -1,0 +1,413 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>For My Valentine ❤️</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Dancing+Script:wght@400;600;700&family=Playfair+Display:ital,wght@0,400;0,600;1,400&family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
+    <style>
+        /* --- Global Styles --- */
+        body {
+            font-family: 'Poppins', sans-serif;
+            background: #000;
+            overflow-x: hidden;
+            color: #fce7f3;
+            margin: 0;
+        }
+        .font-dancing { font-family: 'Dancing Script', cursive; }
+        .font-playfair { font-family: 'Playfair Display', serif; }
+
+        /* --- Screens / Sections --- */
+        .section {
+            display: none;
+            height: 100vh;
+            width: 100vw;
+            position: fixed;
+            top: 0;
+            left: 0;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            opacity: 0;
+            transition: opacity 0.8s ease-in-out;
+            z-index: 10;
+        }
+        .section.active {
+            display: flex;
+            opacity: 1;
+        }
+
+        /* --- Backgrounds --- */
+        .bg-intro { background: radial-gradient(circle at center, #2a0a18 0%, #000000 100%); }
+        .bg-wish { background: linear-gradient(135deg, #ff9a9e 0%, #fecfef 99%, #fecfef 100%); color: #d63384; }
+        .bg-photos { background: linear-gradient(to bottom, #2c0e18, #5a192c); }
+        .bg-letter { background: linear-gradient(135deg, #434343 0%, #000000 100%); }
+
+        /* --- Carousel Styles --- */
+        .carousel-container {
+            position: relative;
+            width: 100%;
+            height: 55vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            perspective: 1000px;
+            margin-top: 20px;
+        }
+        
+        .carousel-item {
+            position: absolute;
+            width: 300px;
+            height: 450px;
+            border-radius: 20px;
+            background: #fff;
+            overflow: hidden;
+            cursor: pointer;
+            border: 4px solid #ec4899; 
+            box-shadow: 0 0 20px #ec4899, 0 0 40px #be185d;
+            animation: pulsePink 3s infinite alternate;
+        }
+
+        @keyframes pulsePink {
+            from { box-shadow: 0 0 15px #ec4899; }
+            to { box-shadow: 0 0 35px #ec4899, 0 0 10px white; }
+        }
+
+        .carousel-item img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            display: block; 
+        }
+
+        @media (max-width: 768px) {
+            .carousel-item { width: 260px; height: 380px; }
+        }
+
+        /* --- Falling Petals --- */
+        .petal {
+            position: fixed;
+            top: -10vh;
+            font-size: 2rem;
+            pointer-events: none;
+            z-index: 50;
+            animation: fall linear forwards;
+        }
+        @keyframes fall {
+            to { transform: translateY(110vh) rotate(720deg); }
+        }
+
+        /* --- Letter Paper --- */
+        .paper {
+            background: #fffdf7; /* Creamy paper color */
+            background-image: linear-gradient(#f0f0f0 1px, transparent 1px);
+            background-size: 100% 30px; /* Notebook lines effect */
+            padding: 30px;
+            max-width: 600px;
+            width: 90%;
+            border-radius: 5px;
+            box-shadow: 0 10px 30px rgba(255, 182, 193, 0.4);
+            position: relative;
+            max-height: 75vh;
+            overflow-y: auto;
+            /* Initial state for animation */
+            opacity: 0; 
+            transform: translateY(50px) rotate(0deg);
+        }
+        
+        /* Navigation Buttons */
+        .nav-btn {
+            background: #ec4899;
+            color: white;
+            border: none;
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            font-size: 1.5rem;
+            cursor: pointer;
+            box-shadow: 0 5px 15px rgba(236, 72, 153, 0.4);
+            transition: transform 0.2s, background 0.2s;
+            z-index: 20;
+        }
+        .nav-btn:hover { 
+            transform: scale(1.1); 
+            background: #db2777; 
+        }
+
+        /* Scrollbar for letter */
+        .paper::-webkit-scrollbar { width: 6px; }
+        .paper::-webkit-scrollbar-thumb { background-color: #fbcfe8; border-radius: 4px; }
+    </style>
+</head>
+<body>
+
+    <audio id="bgMusic" loop>
+        <source src="love_song.mp3" type="audio/mpeg">
+    </audio>
+
+    <div id="hearts-container" class="fixed inset-0 pointer-events-none z-0"></div>
+
+    <div id="screen-1" class="section active bg-intro">
+        <h1 class="text-6xl md:text-8xl font-dancing text-pink-500 mb-6 drop-shadow-lg text-center px-4">
+            For Amna...
+        </h1>
+        <p class="text-pink-200 text-xl mb-10 font-light tracking-wide">I have a surprise for you</p>
+        
+        <button onclick="startJourney()" class="px-10 py-4 bg-gradient-to-r from-pink-600 to-rose-600 rounded-full text-white font-bold text-xl shadow-lg hover:scale-105 transition-transform duration-300 border-2 border-pink-400">
+            Tap to Open ❤️
+        </button>
+    </div>
+
+    <div id="screen-2" class="section bg-wish text-center px-4">
+        <h1 class="text-5xl md:text-7xl font-dancing font-bold text-pink-700 mb-4 scale-0" id="wish-title">
+            Happy Valentine's Day<br>Baby! 🌹
+        </h1>
+        <p class="text-xl text-rose-800 mt-4 opacity-0" id="wish-sub">
+            You make my life beautiful.
+        </p>
+        <button onclick="nextSection(3)" class="mt-12 px-8 py-3 bg-white text-pink-600 rounded-full font-bold shadow-xl hover:bg-rose-50 transition opacity-0" id="wish-btn">
+            See Our Memories ➡️
+        </button>
+    </div>
+
+    <div id="screen-3" class="section bg-photos relative">
+        <h2 class="text-4xl font-dancing text-pink-300 mb-4 z-20 mt-8 md:mt-0">Our Moments</h2>
+
+        <div class="carousel-container">
+            <button class="nav-btn absolute left-4 md:left-10" onclick="moveSlide(-1)">❮</button>
+            <div id="track" class="w-full h-full flex justify-center items-center relative">
+                </div>
+            <button class="nav-btn absolute right-4 md:right-10" onclick="moveSlide(1)">❯</button>
+        </div>
+
+        <div class="h-20 flex items-center justify-center px-4 text-center z-20 mt-8 mb-2">
+            <p id="caption" class="text-xl md:text-2xl font-playfair text-pink-200 italic transition-opacity duration-300"></p>
+        </div>
+
+        <button onclick="nextSection(4)" class="mt-4 px-6 py-2 border border-pink-400 text-pink-300 rounded-full hover:bg-pink-900/30 transition z-20 text-sm">
+            One Last Thing... ↓
+        </button>
+    </div>
+
+    <div id="screen-4" class="section bg-letter">
+        <div id="petals-container"></div>
+
+        <div class="paper relative">
+            <div class="absolute -top-3 left-1/2 transform -translate-x-1/2 w-32 h-8 bg-pink-200/50 rotate-1 z-10 shadow-sm"></div>
+            
+            <h2 class="text-4xl font-dancing text-center text-rose-600 mb-6 font-bold pt-4">Meri Shayaari, Meri Amna...</h2>
+            
+            <div class="bg-pink-50 p-4 rounded-lg border-l-4 border-rose-400 mb-6 shadow-sm">
+                <p class="font-dancing text-2xl text-center text-rose-700 leading-relaxed">
+                    "Log kehte hain mohabbat ek baar hoti hai<br>
+                    Par main jab jab aapko dekhta hoon,<br>
+                    mujhe har baar hoti hai."
+                </p>
+            </div>
+
+            <div class="space-y-5 text-gray-800 font-playfair leading-relaxed text-lg letter-content">
+                <p>
+                    Amna, log Valentine's Day par tohfe (gifts) dete hain, par main aapko apna aane wala har lamha dena chahta hoon. Aap mere liye sirf ek rishta nahi ho, aap <span class="text-rose-600 font-bold">sukoon</span> ka wo thikana ho jahan main din bhar ki thakan ke baad panah leta hoon.
+                </p>
+                <p>
+                    Jab hum saath hote hain, waqt jaise thamm sa jata hai. Main chahta hoon ki humari ye kahani sirf aaj ke din tak na rahe—main ise har subah aapki chai ki chuski mein, aur har raat sitaron ki khamoshi mein likhna chahta hoon.
+                </p>
+                <p>
+                    Aapki ek muskurahat mere pure din ki kamai hai. Vaada hai mera, duniya ki bheed mein kabhi aapka haath nahi chodunga, aur humesha aapki izzat aur khushi ko apni pehli tarjih (priority) rakhunga.
+                </p>
+                
+                <p class="text-center font-bold text-rose-600 text-xl mt-6">
+                    Happy Valentine's Day, My Queen. 👑
+                </p>
+
+                <div class="text-right mt-8 pt-4 border-t border-pink-200">
+                    <p class="text-gray-600 text-base">Hamesha,</p>
+                    <p class="text-3xl font-dancing text-rose-600 font-bold">Dev</p>
+                    <p class="text-sm text-gray-500 italic">Aapka Humsafar 💍❤️</p>
+                </div>
+            </div>
+        </div>
+
+        <button onclick="location.reload()" class="fixed top-5 right-5 text-pink-300 hover:text-white text-xs z-50">
+            Replay ↻
+        </button>
+    </div>
+
+    <script>
+        // --- CONFIGURATION ---
+        const slides = [
+            { img: "pic1.png", caption: "I love you more than words can say 💖" },
+            { img: "pic2.jpg", caption: "You are full of surprises! 🎁" },
+            { img: "pic3.jpg", caption: "Your smile is my daily motivation ✨" },
+            { img: "pic4.png", caption: "Our most precious memory together 🌟" },
+            { img: "pic5.png", caption: "You are my favorite notification 📱❤️" }
+        ];
+
+        let currentSlide = 0;
+        const bgMusic = document.getElementById('bgMusic');
+
+        // --- SECTION 1 ---
+        function startJourney() {
+            bgMusic.play().catch(e => console.log("Audio interaction needed"));
+            nextSection(2);
+            setTimeout(() => {
+                gsap.to("#wish-title", { scale: 1, duration: 1, ease: "elastic.out(1, 0.3)" });
+                gsap.to("#wish-sub", { opacity: 1, y: 0, delay: 0.5, duration: 1 });
+                gsap.to("#wish-btn", { opacity: 1, y: 0, delay: 1.5, duration: 1 });
+            }, 500);
+        }
+
+        // --- NAVIGATION ---
+        function nextSection(id) {
+            document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
+            const next = document.getElementById(`screen-${id}`);
+            next.classList.add('active');
+            
+            if(id === 3) renderCarousel();
+            
+            // --- UPDATED ANIMATION FOR LETTER (Section 4) ---
+            if(id === 4) {
+                startRoseRain();
+                
+                // 1. Reset state
+                gsap.set(".paper", { y: 100, opacity: 0, rotation: -2, scale: 0.9 });
+                gsap.set(".paper p, .paper h2, .paper div", { opacity: 0, y: 20 });
+
+                // 2. Animate Paper sliding up
+                gsap.to(".paper", { 
+                    y: 0, 
+                    opacity: 1, 
+                    rotation: 1, 
+                    scale: 1, 
+                    duration: 1.5, 
+                    ease: "power3.out" 
+                });
+
+                // 3. Animate Text Staggered (Typewriter-ish feel)
+                gsap.to(".paper h2, .paper div, .paper p", { 
+                    opacity: 1, 
+                    y: 0, 
+                    duration: 1, 
+                    stagger: 0.3, 
+                    delay: 0.5,
+                    ease: "power2.out"
+                });
+            }
+        }
+
+        // --- CAROUSEL ---
+        function renderCarousel() {
+            const track = document.getElementById('track');
+            track.innerHTML = '';
+
+            slides.forEach((slide, index) => {
+                const el = document.createElement('div');
+                el.className = 'carousel-item';
+                const img = document.createElement('img');
+                img.src = slide.img;
+                img.onerror = function() {
+                    this.style.display = 'none';
+                    const errDiv = document.createElement('div');
+                    errDiv.style.cssText = 'width:100%;height:100%;background:#fce7f3;color:#db2777;display:flex;align-items:center;justify-content:center;text-align:center;padding:20px;';
+                    errDiv.innerHTML = `<strong>Image Not Found!</strong><br>${slide.img}`;
+                    el.appendChild(errDiv);
+                };
+                el.onclick = () => moveSlide(index - currentSlide);
+                el.appendChild(img);
+                track.appendChild(el);
+            });
+            updateCarousel();
+        }
+
+        function moveSlide(direction) {
+            currentSlide = (currentSlide + direction + slides.length) % slides.length;
+            updateCarousel();
+        }
+
+        function updateCarousel() {
+            const items = document.querySelectorAll('.carousel-item');
+            const captionEl = document.getElementById('caption');
+            captionEl.style.opacity = 0;
+
+            items.forEach((item, index) => {
+                const offset = index - currentSlide;
+                let visualOffset = offset;
+                if(offset > slides.length/2) visualOffset -= slides.length;
+                if(offset < -slides.length/2) visualOffset += slides.length;
+
+                let zIndex = 0;
+                let transform = '';
+                let opacity = 0;
+                let pointerEvents = 'none';
+
+                if (visualOffset === 0) {
+                    transform = 'translateX(0) scale(1)';
+                    zIndex = 10;
+                    opacity = 1;
+                    pointerEvents = 'auto';
+                } else if (Math.abs(visualOffset) === 1) {
+                    transform = `translateX(${visualOffset * 220}px) scale(0.8) rotateY(${visualOffset * -15}deg)`;
+                    zIndex = 5;
+                    opacity = 0.6;
+                    pointerEvents = 'auto'; 
+                } else {
+                    transform = `translateX(${visualOffset * 100}px) scale(0)`;
+                    opacity = 0;
+                }
+
+                item.style.transform = transform;
+                item.style.zIndex = zIndex;
+                item.style.opacity = opacity;
+                item.style.pointerEvents = pointerEvents;
+            });
+
+            setTimeout(() => {
+                captionEl.textContent = slides[currentSlide].caption;
+                captionEl.style.opacity = 1;
+            }, 300);
+        }
+
+        // --- RAIN ---
+        function startRoseRain() {
+            const container = document.getElementById('petals-container');
+            const roseTypes = ['🌹', '🌺', '🥀', '🌸']; 
+            const createPetal = () => {
+                const el = document.createElement('div');
+                el.className = 'petal';
+                el.textContent = roseTypes[Math.floor(Math.random() * roseTypes.length)];
+                el.style.left = Math.random() * 100 + 'vw';
+                el.style.animationDuration = Math.random() * 3 + 4 + 's';
+                el.style.fontSize = Math.random() * 20 + 20 + 'px';
+                container.appendChild(el);
+                setTimeout(() => el.remove(), 7000);
+            };
+            const interval = setInterval(createPetal, 300);
+            setTimeout(() => clearInterval(interval), 15000);
+        }
+
+        // --- HEARTS ---
+        function initHearts() {
+            const container = document.getElementById('hearts-container');
+            setInterval(() => {
+                const h = document.createElement('div');
+                h.textContent = '❤️';
+                h.style.position = 'absolute';
+                h.style.left = Math.random() * 100 + '%';
+                h.style.top = '100%';
+                h.style.opacity = 0.3;
+                h.style.fontSize = Math.random() * 20 + 10 + 'px';
+                h.style.transition = 'all 8s linear';
+                container.appendChild(h);
+                setTimeout(() => {
+                    h.style.top = '-10%';
+                    h.style.transform = `rotate(${Math.random() * 360}deg)`;
+                }, 100);
+                setTimeout(() => h.remove(), 8000);
+            }, 800);
+        }
+        initHearts();
+    </script>
+</body>
+</html>
